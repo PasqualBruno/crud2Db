@@ -7,54 +7,38 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ===== 1. Conexão com MongoDB =====
+// Conexão com Mongo Atlas
 mongoose
   .connect(process.env.MONGO_URL)
-  .then(() => console.log("🔵 MongoDB conectado!"))
-  .catch((err) => console.error("❌ Erro no Mongo:", err));
+  .then(() => console.log("MongoDB conectado"))
+  .catch((err) => console.error("Erro no MongoDB", err));
 
-// ===== 2. Schema =====
+// CRUD
 const DishSchema = new mongoose.Schema({
   name: String,
   price: Number,
   image: String,
 });
-
 const Dish = mongoose.model("Dish", DishSchema);
 
-// ===== 3. Rotas =====
+// Rotas
+app.get("/", (req, res) => res.send("API ONLINE"));
 
-// CREATE
-app.post("/dishes", async (req, res) => {
-  try {
-    const dish = await Dish.create(req.body);
-    res.json(dish);
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao criar prato" });
-  }
-});
-
-// READ
 app.get("/dishes", async (req, res) => {
-  const dishes = await Dish.find();
-  res.json(dishes);
+  const r = await Dish.find();
+  res.json(r);
 });
 
-// UPDATE
-app.put("/dishes/:id", async (req, res) => {
-  const updated = await Dish.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  res.json(updated);
+app.post("/dishes", async (req, res) => {
+  const r = await Dish.create(req.body);
+  res.json(r);
 });
 
-// DELETE
 app.delete("/dishes/:id", async (req, res) => {
   await Dish.findByIdAndDelete(req.params.id);
   res.json({ success: true });
 });
 
-// ===== 4. Start =====
-app.listen(3000, () => {
-  console.log("🚀 API rodando na porta 3000");
-});
+// Porta dinâmica do Render
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log("API rodando na porta " + port));
