@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.50.76:3000";
+const API_URL = "https://crud2db.onrender.com";
 
 export async function mongoGetAll() {
   const res = await fetch(`${API_URL}/dishes`);
